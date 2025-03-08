@@ -1,0 +1,181 @@
+Below is a complete, interactive HTML simulation for "Simple Harmonic Motion" (Pendulum Motion Simulation). The code includes a displacement graph, a moving dot representing the object, and controls to adjust amplitude, frequency, and phase angle. The simulation is responsive and uses modern JavaScript (ES6+) and CSS3.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Harmonic Motion Simulation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      color: #333;
+    }
+    .container {
+      width: 90%;
+      max-width: 800px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .controls {
+      margin-bottom: 20px;
+    }
+    .controls label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    .controls input {
+      width: 100%;
+    }
+    canvas {
+      width: 100%;
+      height: 300px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Harmonic Motion Simulation</h1>
+  <div class="container">
+    <div class="controls">
+      <label for="amplitude">Amplitude (A): <span id="amplitude-value">1</span></label>
+      <input type="range" id="amplitude" min="0.1" max="2" step="0.1" value="1">
+
+      <label for="frequency">Frequency (f): <span id="frequency-value">1</span></label>
+      <input type="range" id="frequency" min="0.1" max="5" step="0.1" value="1">
+
+      <label for="phase">Phase Angle (φ): <span id="phase-value">0</span></label>
+      <input type="range" id="phase" min="0" max="360" step="1" value="0">
+    </div>
+    <canvas id="simulation"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('simulation');
+    const ctx = canvas.getContext('2d');
+
+    // Constants
+    const WIDTH = canvas.width;
+    const HEIGHT = canvas.height;
+    const CENTER_Y = HEIGHT / 2;
+    const PIXELS_PER_UNIT = 50; // Scale for displacement
+
+    // Simulation variables
+    let amplitude = 1;
+    let frequency = 1;
+    let phase = 0;
+    let time = 0;
+
+    // DOM elements
+    const amplitudeInput = document.getElementById('amplitude');
+    const frequencyInput = document.getElementById('frequency');
+    const phaseInput = document.getElementById('phase');
+    const amplitudeValue = document.getElementById('amplitude-value');
+    const frequencyValue = document.getElementById('frequency-value');
+    const phaseValue = document.getElementById('phase-value');
+
+    // Event listeners for controls
+    amplitudeInput.addEventListener('input', (e) => {
+      amplitude = parseFloat(e.target.value);
+      amplitudeValue.textContent = amplitude;
+    });
+
+    frequencyInput.addEventListener('input', (e) => {
+      frequency = parseFloat(e.target.value);
+      frequencyValue.textContent = frequency;
+    });
+
+    phaseInput.addEventListener('input', (e) => {
+      phase = parseFloat(e.target.value);
+      phaseValue.textContent = phase;
+    });
+
+    // Function to calculate displacement
+    function calculateDisplacement(t) {
+      const angularFrequency = 2 * Math.PI * frequency;
+      return amplitude * Math.cos(angularFrequency * t + (phase * Math.PI / 180));
+    }
+
+    // Function to draw the simulation
+    function draw() {
+      // Clear the canvas
+      ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+      // Draw axes
+      ctx.beginPath();
+      ctx.moveTo(0, CENTER_Y);
+      ctx.lineTo(WIDTH, CENTER_Y);
+      ctx.moveTo(50, 0);
+      ctx.lineTo(50, HEIGHT);
+      ctx.strokeStyle = '#000';
+      ctx.stroke();
+
+      // Draw displacement curve
+      ctx.beginPath();
+      ctx.moveTo(0, CENTER_Y - calculateDisplacement(0) * PIXELS_PER_UNIT);
+      for (let x = 0; x < WIDTH; x++) {
+        const t = x / (WIDTH / 10); // Scale time to fit the canvas
+        const y = CENTER_Y - calculateDisplacement(t) * PIXELS_PER_UNIT;
+        ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = '#007BFF';
+      ctx.stroke();
+
+      // Draw moving dot
+      const dotX = (time % (WIDTH / 10)) * (WIDTH / 10);
+      const dotY = CENTER_Y - calculateDisplacement(time) * PIXELS_PER_UNIT;
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = '#FF0000';
+      ctx.fill();
+
+      // Update time
+      time += 0.02;
+
+      // Request next frame
+      requestAnimationFrame(draw);
+    }
+
+    // Start the simulation
+    draw();
+  </script>
+</body>
+</html>
+```
+
+### Key Features:
+1. **Interactive Controls**:
+   - Amplitude, frequency, and phase angle can be adjusted using sliders.
+   - The simulation updates in real-time as the sliders are moved.
+
+2. **Visualization**:
+   - A smooth displacement curve is plotted over time.
+   - A red dot moves along the curve, representing the object in SHM.
+
+3. **Responsive Design**:
+   - The simulation is responsive and works on different screen sizes.
+
+4. **Physics Model**:
+   - The displacement is calculated using the equation \( x(t) = A \cos(\omega t + \phi) \), where \( \omega = 2\pi f \).
+
+5. **Educational Purpose**:
+   - The code is well-commented and organized for easy understanding.
+
+### How to Use:
+1. Open the HTML file in a modern web browser.
+2. Adjust the sliders to change amplitude, frequency, and phase angle.
+3. Observe how the displacement curve and the moving dot change in real-time.
+
+This simulation is a great tool for visualizing and understanding the principles of Simple Harmonic Motion!
